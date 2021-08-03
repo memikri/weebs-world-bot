@@ -23,7 +23,6 @@ export class Utils extends null {
       a: ApplicationCommandOptionData[] | undefined,
       b: ApplicationCommandOptionData[] | undefined
     ) {
-      debugger;
       if (!a && !b) return true;
       if (!a || !b) return false;
       if (a.length !== b.length) return false;
@@ -34,7 +33,6 @@ export class Utils extends null {
       }
       return true;
     }
-    debugger;
     return !!(
       a === b ||
       (a &&
