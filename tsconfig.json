@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "lib": ["es2021"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "strict": true,
+    "outDir": "dist",
+    "inlineSourceMap": true,
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*.ts"]
+}
