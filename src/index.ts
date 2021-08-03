@@ -3,8 +3,7 @@ import dotenv from 'dotenv';
 import glob from 'glob';
 import path from 'path';
 
-import { Imported, SlashesClient } from './ext/slashes';
-import { SlashCommandConstructor } from './ext/slashes/commands/SlashCommand';
+import { Imported, SlashesClient, SlashCommandConstructor } from './ext/slashes';
 
 dotenv.config();
 

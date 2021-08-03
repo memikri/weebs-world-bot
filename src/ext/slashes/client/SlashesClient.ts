@@ -3,6 +3,7 @@ import { plural, resolvePermissions } from '../../../utils';
 import { SlashCommand, SlashCommandConstructor } from '../commands/SlashCommand';
 import { SlashCommandInteraction } from '../commands/SlashCommandInteraction';
 import { Imported, Utils } from '../Utils';
+import { Constants } from '../Constants';
 
 export interface SlashesClientOptions extends ClientOptions {
   reportErrors?: boolean;
@@ -97,14 +98,14 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
     if (!this.isReady()) {
       throw new Error('Client is not ready');
     }
-    const registered = await this.application.commands.fetch();
+    const registered = [...(await this.application.commands.fetch()).values()];
     const loaded = [...this.commands.filter((cmd) => !cmd.guildId).values()];
 
     const toDelete = registered.filter((command) => loaded.every((reg) => !Utils.compareCommands(reg.data, command)));
     const toCreate = loaded.filter((ld) => !registered.some((rd) => Utils.compareCommands(ld.data, rd)));
 
     const queue: Promise<unknown>[] = [];
-    if (registered.size > 0) {
+    if (registered.length > 0 && toDelete.length + toCreate.length < Constants.APPLICATION_COMMAND_MERGE_LIMIT) {
       queue.push(
         ...toDelete.map((command) =>
           command.delete().then(() => this.emit('slashes-debug', `Deleted command ${command.name}`))
