@@ -19,7 +19,7 @@ const commands = glob
   .sync(path.join(__dirname, 'commands', '*.command.js'))
   .map((file) => require(file) as Imported<SlashCommandConstructor>);
 
-for (const command of commands) client.registerCommand(command);
+for (const Command of commands) client.registerCommand(Command);
 
 void (async () => {
   await client.login(process.env.DISCORD_TOKEN);
