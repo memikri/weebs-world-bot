@@ -1,4 +1,4 @@
-import { ApplicationCommandData, ApplicationCommandOptionData } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionData, PermissionResolvable, Permissions } from 'discord.js';
 
 export type Constructable<T, A extends unknown[] = []> = new (...args: A) => T;
 export type Imported<T> = T | { default: T };
@@ -47,5 +47,22 @@ export class Utils extends null {
   public static resolveImport<T>(imported: Imported<T>): T {
     if ('default' in imported) return imported.default;
     return imported;
+  }
+
+  public static resolvePermissions(arg: PermissionResolvable | Permissions | string): Permissions {
+    if (typeof arg === 'string') {
+      return new Permissions(BigInt(arg));
+    } else if (arg instanceof Permissions) {
+      return arg;
+    } else {
+      return new Permissions(arg);
+    }
+  }
+
+  public static plural<N extends number, T extends string>(
+    count: N,
+    type: T
+  ): N extends 1 ? `${N} ${T}` : `${N} ${T}s` {
+    return (count === 1 ? `${count} ${type}` : `${count} ${type}s`) as N extends 1 ? `${N} ${T}` : `${N} ${T}s`;
   }
 }

@@ -1,5 +1,4 @@
 import { Awaited, Client, ClientEvents, ClientOptions, Collection, Interaction, Snowflake } from 'discord.js';
-import { plural, resolvePermissions } from '../../../utils';
 import { SlashCommand, SlashCommandConstructor } from '../commands/SlashCommand';
 import { SlashCommandInteraction } from '../commands/SlashCommandInteraction';
 import { Imported, Utils } from '../Utils';
@@ -36,7 +35,7 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
       if (command) {
         // Process checks
         if (interaction.member) {
-          const actualPermissions = resolvePermissions(interaction.member.permissions);
+          const actualPermissions = Utils.resolvePermissions(interaction.member.permissions);
           if (!actualPermissions.has(command.permissions)) {
             await slashCommandInteraction.send({
               ephemeral: true,
@@ -147,7 +146,7 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
         guild.commands
           .set(guildCommands.map((cmd) => cmd.data))
           .then(() =>
-            this.emit('slashes-debug', `Synced ${plural(guildCommands.length, 'command')} in guild ${guild.id}`)
+            this.emit('slashes-debug', `Synced ${Utils.plural(guildCommands.length, 'command')} in guild ${guild.id}`)
           )
       );
     }
