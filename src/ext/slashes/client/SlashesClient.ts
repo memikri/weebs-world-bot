@@ -7,6 +7,7 @@ import { Constants } from '../Constants';
 export interface SlashesClientOptions extends ClientOptions {
   reportErrors?: boolean;
   syncCommands?: boolean;
+  guildId?: Snowflake;
 }
 
 export interface SlashesClientEvents extends ClientEvents {
@@ -97,6 +98,7 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
     if (!this.isReady()) {
       throw new Error('Client is not ready');
     }
+
     const registered = [...(await this.application.commands.fetch()).values()];
     const loaded = [...this.commands.filter((cmd) => !cmd.guildId).values()];
 
@@ -107,13 +109,13 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
     if (registered.length > 0 && toDelete.length + toCreate.length < Constants.APPLICATION_COMMAND_MERGE_LIMIT) {
       queue.push(
         ...toDelete.map((command) =>
-          command.delete().then(() => this.emit('slashes-debug', `Deleted command ${command.name}`))
+          command.delete().then(() => this.emit('slashes-debug', `Deleted application command ${command.name}`))
         )
       );
       queue.push(
         ...toCreate.map((command) =>
           this.application!.commands.create(command.data).then(() =>
-            this.emit('slashes-debug', `Created command ${command.data.name}`)
+            this.emit('slashes-debug', `Created application command ${command.data.name}`)
           )
         )
       );
@@ -155,6 +157,12 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
   }
 
   public async syncCommands(): Promise<void> {
+    if (this.options.guildId) {
+      this.emit('slashes-debug', 'Mutating registered command guildId properties because guildId is set');
+      for (const command of this.commands.values()) {
+        command.guildId = this.options.guildId;
+      }
+    }
     await Promise.all([this.syncApplicationCommands(), this.syncGuildCommands()]);
   }
 
@@ -187,6 +195,7 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
     return result;
   }
 
+  //#region EventEmitter overrides
   public on<K extends keyof SlashesClientEvents>(
     event: K,
     listener: (...args: SlashesClientEvents[K]) => Awaited<void>
@@ -229,4 +238,5 @@ export class SlashesClient<Ready extends boolean = boolean> extends Client<Ready
   public removeAllListeners<S extends string | symbol>(event?: Exclude<S, keyof SlashesClientEvents>): this {
     return super.removeAllListeners(event as string);
   }
+  //#endregion
 }

@@ -9,9 +9,9 @@ export interface SlashCommandOptions extends ApplicationCommandData {
 }
 
 export abstract class SlashCommand {
-  public readonly data: ApplicationCommandData;
-  public readonly guildId: string | null;
-  public readonly permissions: bigint;
+  public data: ApplicationCommandData;
+  public guildId: string | null;
+  public permissions: bigint;
 
   #guild: Guild | null = null;
 

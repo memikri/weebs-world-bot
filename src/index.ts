@@ -11,6 +11,7 @@ const client = new SlashesClient<true>({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS],
   reportErrors: true,
   syncCommands: true,
+  guildId: process.env.GUILD_ID,
 });
 
 client.on('slashes-debug', (message) => console.log('[slashes-debug]', message));
